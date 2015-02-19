@@ -11,6 +11,39 @@ _Insert Synopsis Here_: ... there should be a synopsis which describes and summa
 
 ...describes (in words and code) how the data were loaded into R and processed for analysis. In particular, your analysis must start from the raw CSV file containing the data. You cannot do any preprocessing outside the document. If preprocessing is time-consuming you may consider using the cache = TRUE option for certain code chunks.
 
+Download and unpack the data
+
+```{r cache=TRUE, message=FALSE}
+library(R.utils)
+
+# Download data file
+dataFile <- "stormData.csv"
+dataFileBz2 <- "stormData.csv.bz2"
+
+if (!file.exists(dataFile)){
+    print("Downloading data file")
+    download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", dataFileBz2, "curl", quiet=TRUE)
+    # Extract the contents of the compressed file
+    bunzip2(dataFileBz2)
+} else {
+    print("File already exists locally")
+}
+```
+
+Load the uncompressed data into a data frame
+
+```{r cache=TRUE, message=FALSE}
+data <- read.csv("stormData.csv")
+```
+
+Inspect the data
+
+```{r cache=TRUE, message=FALSE}
+str(data)
+summary(data)
+head(data, n=10)
+```
+
 ##Results
 
 ...in which your results are presented. 
