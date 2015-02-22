@@ -83,13 +83,13 @@ summary(as.factor(propData$PROPDMGEXP))
 summary(as.factor(propData$CROPDMGEXP))
 ```
 
-I could not locate a code table to explain these values seen in the exponent field, so some assumptions are necessary to create comparable values.  I will assume this mapping:
+I description of the data set indicates a mapping for the text values B,M and K. Other values are not described.  David Hood and Eddie Song have indicated in the discussion fora for the Coursea Reproducible Research class that the numeric values are data entry errors.  Given the small number of occurences and small values when compared to damage in the millions and billions, these values can be ignored without significatn effect on the analysis.  I will assume this mapping:
 
 * B,b are billions or 10^9
 * M,m are millions or 10^6
 * K,k are thousands or 10^3
 * H,h are hundreds or 10^2
-* Any numeric value, N is the exponent itself, e.g. 10^N
+* Any numeric value, is a data entry error and will be treated is missing data
 * blank should be no exponent or 10^0
 * ? could be interpreted is missing data or that the coder did not understand the what an exponent was or what value to enter.  I will treat "?" as a missing value.
 * "-" and "+" will also be treated as missing data.
@@ -98,8 +98,8 @@ Apply these assumptions and verify they gave the desired result
 
 ```{r}
 # Make a map to replace the character values with the desired numeric exponents
-expChars <- c("B", "b", "M", "m", "K", "k", "H", "h", "", "?", "-", "+")
-expVals <- c(9, 9, 6, 6, 3, 3, 2, 2, 0, NA, NA, NA)
+expChars <- c("B", "b", "M", "m", "K", "k", "H", "h", "", "?", "-", "+", seq(0,9))
+expVals <- c(9, 9, 6, 6, 3, 3, 2, 2, 0, NA, NA, NA, rep(NA,10))
 expMap <- data.frame(expChars, expVals)
 
 # Apply the map to the Property Damage Exponent to replace non-numeric values
