@@ -142,7 +142,17 @@ propData$CROPDMGEXPRevised <-
 # compare the input and output of the preceeding transformation
 summary(as.factor(propData$CROPDMGEXP))
 summary(as.factor(propData$CROPDMGEXPRevised))
+```
 
+Now combine the un-exponentiated damage and damage exponent columns to create a damage column
+
+```{r}
+propData$cropDamage <- propData$CROPDMG * 10^as.numeric(propData$CROPDMGEXPRevised)
+propData$propDamage <- propData$PROPDMG * 10^as.numeric(propData$PROPDMGEXPRevised)
+
+# inspect the new values for damage
+summary(propData$cropDamage)
+summary(propData$propDamage)
 
 ```
 
