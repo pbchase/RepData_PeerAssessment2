@@ -9,30 +9,24 @@ _Insert Synopsis Here_: ... there should be a synopsis which describes and summa
 
 ##Data Processing
 
-...describes (in words and code) how the data were loaded into R and processed for analysis. In particular, your analysis must start from the raw CSV file containing the data. You cannot do any preprocessing outside the document. If preprocessing is time-consuming you may consider using the cache = TRUE option for certain code chunks.
+The raw source data set for our analysis can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2.  A description of the data can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
 
-
-The data set can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2
-
-A description of the data can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
-
-Download and unpack the data
+To prepare the raw data fro analysis we must firts download and unpack the data
 
 ```{r cache=TRUE, message=FALSE}
 # We'll need the R.utils library to extract the data from a BZ2 file
 library(R.utils)
 
 # Download data file
+dataURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 dataFile <- "stormData.csv"
 dataFileBz2 <- "stormData.csv.bz2"
 
 if (!file.exists(dataFile)){
     print("Downloading data file")
-    download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2", dataFileBz2, "curl", quiet=TRUE)
+    download.file(dataURL, dataFileBz2, "curl", quiet=TRUE)
     # Extract the contents of the compressed file
     bunzip2(dataFileBz2)
-} else {
-    print("File already exists locally")
 }
 ```
 
@@ -50,7 +44,7 @@ Load the uncompressed data into a data frame
 data <- read.csv("stormData.csv")
 ```
 
-Inspect the data
+Inspect the data in the data frame
 
 ```{r cache=TRUE, message=FALSE}
 str(data)
@@ -82,14 +76,14 @@ str(propData)
 summary(propData)
 ```
 
-The numeric property damage and crop damage figures each have an exponent expressed in a separate character column.  This make the values not directly comparable or combinable.  Additionally some of the exponent values are not shown in the summary above.  We need to combine the numeric and exponent data into a single numeric value to allow our analysis.  There are no missing values to interfere with this transformation.
+The numeric property damage and crop damage figures each have an exponent expressed in a separate character column.  This makes the values not directly comparable or combinable.  Additionally some of the exponent values are not shown in the summary above.  We need to combine the numeric and exponent data into a single numeric value to allow our analysis.  There are no missing values to interfere with this transformation.
 
 ```{r}
 summary(as.factor(propData$PROPDMGEXP))
 summary(as.factor(propData$CROPDMGEXP))
 ```
 
-I could not locate a coding to explain these values, so some assumptions are necessary to create comparable values.  I will assume this mapping:
+I could not locate a code table to explain these values seen in the exponent field, so some assumptions are necessary to create comparable values.  I will assume this mapping:
 
 * B,b are billions or 10^9
 * M,m are millions or 10^6
@@ -100,7 +94,7 @@ I could not locate a coding to explain these values, so some assumptions are nec
 * ? could be interpreted is missing data or that the coder did not understand the what an exponent was or what value to enter.  I will treat "?" as a missing value.
 * "-" and "+" will also be treated as missing data.
 
-Apply these assumptions and verify the gave the desired result
+Apply these assumptions and verify they gave the desired result
 
 ```{r}
 # Make a map to replace the character values with the desired numeric exponents
@@ -144,13 +138,13 @@ summary(as.factor(propData$CROPDMGEXP))
 summary(as.factor(propData$CROPDMGEXPRevised))
 ```
 
-Now combine the un-exponentiated damage and damage exponent columns to create a damage column
+Now combine the un-exponentiated damage amount and damage exponent columns to create a damage column.  Do this for both crop damage and property damage.
 
 ```{r}
 propData$cropDamage <- propData$CROPDMG * 10^as.numeric(propData$CROPDMGEXPRevised)
 propData$propDamage <- propData$PROPDMG * 10^as.numeric(propData$PROPDMGEXPRevised)
 
-# inspect the new values for damage
+# inspect the new damage figures
 summary(propData$cropDamage)
 summary(propData$propDamage)
 
