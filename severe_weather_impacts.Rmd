@@ -110,8 +110,16 @@ expMap <- data.frame(expChars, expVals)
 
 # Apply the map to the Property Damage Exponent to replace non-numeric values
 propData$PROPDMGEXPRevised <-
-  unlist(lapply(as.character(propData$PROPDMGEXP),
-                function(x) { x <- ifelse(x %in% expMap$expChars, expMap$expVals[expMap$expChars == x], x) ; x}))
+  unlist(
+    lapply(
+      as.character(propData$PROPDMGEXP),
+      function(x) {
+        x <- ifelse(x %in% expMap$expChars,
+                    expMap$expVals[expMap$expChars == x],
+                    x) ; x
+        }
+      )
+    )
 
 # compare the input and output of the preceeding transformation
 summary(as.factor(propData$PROPDMGEXP))
@@ -120,8 +128,16 @@ summary(as.factor(propData$PROPDMGEXPRevised))
 # Repeat this process for the crop data
 # Apply the map to the Crop Damage Exponent to replace non-numeric values
 propData$CROPDMGEXPRevised <-
-  unlist(lapply(as.character(propData$CROPDMGEXP),
-                function(x) { x <- ifelse(x %in% expMap$expChars, expMap$expVals[expMap$expChars == x], x) ; x}))
+  unlist(
+    lapply(
+      as.character(propData$CROPDMGEXP),
+      function(x) {
+        x <- ifelse(x %in% expMap$expChars,
+                    expMap$expVals[expMap$expChars == x],
+                    x) ; x
+        }
+      )
+    )
 
 # compare the input and output of the preceeding transformation
 summary(as.factor(propData$CROPDMGEXP))
