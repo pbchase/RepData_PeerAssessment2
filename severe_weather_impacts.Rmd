@@ -51,6 +51,25 @@ str(data)
 head(data, n=5)
 ```
 
+##Event Types
+
+The EVTYPE column has 985 distinct levels.
+
+```{r}
+str(data$EVTYPE)
+```
+
+The number of levels can be reduced by some basic text processing.  Here we will change the case of all values to uppercase and strip the leading and trailing space from event types.
+
+```{r}
+levels(data$EVTYPE) <- gsub("(\\w+)", "\\U\\1", levels(data$EVTYPE), perl=TRUE)
+levels(data$EVTYPE) <- gsub("^\\s+", "", levels(data$EVTYPE), perl=TRUE)
+levels(data$EVTYPE) <- gsub("\\s+$", "", levels(data$EVTYPE), perl=TRUE)
+str(data$EVTYPE)
+```
+
+This reduces the number of levels to 890.
+
 ### Population Health Data
 To address the first question, _Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?_, we will need the variables EVTYPE, FATALITIES, and INJURIES.
 
