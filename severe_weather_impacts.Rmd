@@ -11,7 +11,7 @@ _Insert Synopsis Here_: ... there should be a synopsis which describes and summa
 
 The raw source data set for our analysis can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2.  A description of the data can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
 
-To prepare the raw data fro analysis we must firts download and unpack the data
+To prepare the raw data for analysis we must first download and unpack the data
 
 ```{r cache=TRUE, message=FALSE}
 # We'll need the R.utils library to extract the data from a BZ2 file
