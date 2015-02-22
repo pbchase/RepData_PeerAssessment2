@@ -83,9 +83,17 @@ summary(popData)
 
 There are no missing values in any variables.  The data types for each column are reasonable.
 
-Population harm data has `r nrow(data %>% distinct(EVTYPE) %>% filter(FATALITIES + INJURIES <= 0)  %>% select(EVTYPE))` levels with no injuries or fatalities.
+```{r message=FALSE, echo=FALSE, results=FALSE,ref.label=""}
 
-```{r}
+library(dplyr)
+number_event_types_without_harm <- nrow(data %>% distinct(EVTYPE) %>% filter(FATALITIES + INJURIES <= 0)  %>% select(EVTYPE))
+```
+
+Population harm data has `r number_event_types_without_harm` levels with no injuries or fatalities.
+
+```{r message=FALSE}
+
+library(dplyr)
 nrow(data %>% distinct(EVTYPE) %>% filter(FATALITIES + INJURIES <= 0)  %>% select(EVTYPE))
 ```
 
