@@ -1,17 +1,17 @@
 ---
 title: "Economic and Health Impacts of Severe Weather Events"
 author: "Philip Chase"
-date: "February 18, 2015"
+date: "February 22, 2015"
 output: html_document
 ---
 
-_Insert Synopsis Here_: ... there should be a synopsis which describes and summarizes your analysis in at most 10 complete sentences.
+In the report we summarize the harm caused by severe weather in events in the US as documented by the US National Weather Service.  Analysis was performed to determine the types of weather events that caused the greatest loss of life, injury and economic harm.  The analysis showed that tornadoes are the single largest cause of fatalities causing nearly three times the fatalities then any other weather event type.  Tornadoes are also the greatest cause of injuries with twelve times the injuries than any other weather event type.  The most severe economic damage is caused by Hurricane/Typhoon. 
 
 ##Data Processing
 
 The raw source data set for our analysis can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2.  A description of the data can be found at https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf
 
-To prepare the raw data for analysis we must first download and unpack the data
+To prepare the raw data for analysis we must first download and unpack the data.
 
 ```{r cache=TRUE, message=FALSE}
 # We'll need the R.utils library to extract the data from a BZ2 file
@@ -51,7 +51,7 @@ str(data)
 head(data, n=5)
 ```
 
-##Event Types
+###Event Types
 
 The EVTYPE column has 985 distinct levels.
 
@@ -169,12 +169,76 @@ summary(propData$propDamage)
 
 ```
 
+We now combine the crop and property damage estimate into a single economic harm
+
+```{r}
+propData$economicHarm <- propData$cropDamage + propData$propDamage
+```
+
 ##Results
 
-...in which your results are presented.
+###Population Harm
 
-The analysis document must have at least one figure containing a plot.
+To determine which events are most harmful to population health group the data by event type, total the fatalities or injuries, and filter for the top 5 events.  Do this for both fatalities and injuries.
 
-Your analysis must have no more than three figures. Figures may have multiple plots in them (i.e. panel plots), but there cannot be more than three figures total.
+```{r message=FALSE}
+library(dplyr)
 
-_Other Sections are allowed_
+fatalities_by_eventType <- popData %>%
+  group_by(EVTYPE) %>%
+  summarise(total=sum(FATALITIES)) %>%
+  arrange(desc(total)) %>%
+  filter(total > 600)
+head(fatalities_by_eventType)
+
+injuries_by_eventType <- popData %>%
+  group_by(EVTYPE) %>%
+  summarise(total=sum(INJURIES)) %>%
+  arrange(desc(total)) %>%
+  filter(total > 2500)
+head(injuries_by_eventType)
+```
+
+Plotting the injuries and fatalities by event type shows the five most harmful event types
+
+```{r}
+library(ggplot2)
+
+ggplot(fatalities_by_eventType, aes(x=EVTYPE, y=total)) +
+  geom_bar(stat="identity") +
+  ggtitle("Weather events that cause the greatest number of fatalities")  +
+  xlab("Type of weather event") +
+  ylab("Total fatalities")
+
+ggplot(injuries_by_eventType, aes(x=EVTYPE, y=total)) +
+  geom_bar(stat="identity") +
+  ggtitle("Weather events that cause the greatest number of injuries")  +
+  xlab("Type of weather event") +
+  ylab("Total injuries")
+```
+
+##Economic Harm
+
+_Across the United States, which types of events have the greatest economic consequences?_
+To determine which events with the greatest economic consequences we can group the data by event type, sort by economic harm, sort by total economic harm and filter for the top 5 events.
+
+```{r message=FALSE}
+economicHarm_by_eventType <- propData %>%
+  group_by(EVTYPE) %>%
+  summarise(total=sum(economicHarm)) %>%
+  arrange(desc(total)) %>%
+  filter(total > 6000000000)
+head(economicHarm_by_eventType)
+```
+
+Plotting the economic harm by event type shows the five most harmful event types
+
+```{r}
+library(ggplot2)
+
+ggplot(economicHarm_by_eventType, aes(x=EVTYPE, y=total)) +
+  geom_bar(stat="identity") +
+  ggtitle("Weather events that cause the greatest economic harm")  +
+  xlab("Type of weather event") +
+  ylab("Total monetary loss in U.S. Dollars")
+```
