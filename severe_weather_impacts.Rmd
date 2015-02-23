@@ -217,9 +217,8 @@ ggplot(injuries_by_eventType, aes(x=EVTYPE, y=total)) +
   ylab("Total injuries")
 ```
 
-##Economic Harm
+###Economic Harm
 
-_Across the United States, which types of events have the greatest economic consequences?_
 To determine which events with the greatest economic consequences we can group the data by event type, sort by economic harm, sort by total economic harm and filter for the top 5 events.
 
 ```{r message=FALSE}
